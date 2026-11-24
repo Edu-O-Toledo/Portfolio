@@ -177,7 +177,7 @@ def carregar_imagem_fundo(caminho_imagem):
             pass
     return ""
 
-CAMINHO_FUNDO_GERAL = r"C:\Users\Eduardo Toledo\Documents\Portfolio\Data\Images\fundo_geral.jpg"
+CAMINHO_FUNDO_GERAL = r"Data\Images\fundo_geral.jpg"
 img_geral_b64 = carregar_imagem_fundo(CAMINHO_FUNDO_GERAL)
 
 if img_geral_b64:
@@ -318,7 +318,7 @@ def abrir_guia_tucupi():
     * **Algoritmo DTM & CHM:** Suporte a `TIN`, `KNNIDW`, `Kriging` e `p2r`.
     """)
 
-CAMINHO_BANNER_FUNDO = r"C:\Users\Eduardo Toledo\Documents\Portfolio\Data\Images\background.jpg"
+CAMINHO_BANNER_FUNDO = r"Data\Images\background.jpg"
 img_fundo_b64 = carregar_imagem_fundo(CAMINHO_BANNER_FUNDO)
 
 if img_fundo_b64:
@@ -580,7 +580,7 @@ with aba_lidar:
         if tipo_dado == "Point Clouds (.laz / .las)":
             mostrar_folhas = st.toggle("🌿 Show Foliage", value=True)
             
-            ARQUIVO_LAS = r"C:\Users\Eduardo Toledo\Documents\Portfolio\Data\LiDAR\tree_43.laz"
+            ARQUIVO_LAS = r"Data\LiDAR\tree_43.laz"
             x_vals, y_vals, z_vals, cores_vals, mask_f = carregar_lidar_otimizado(ARQUIVO_LAS)
             
             fig_3d = go.Figure()
@@ -612,7 +612,7 @@ with aba_lidar:
             st.plotly_chart(fig_3d, use_container_width=True, height=510, key="plot_nuvem_classificada")
             
         else:
-            ARQUIVO_OBJ = r"C:\Users\Eduardo Toledo\Documents\Portfolio\Data\Obj\tree_43.obj"
+            ARQUIVO_OBJ = r"Data\Obj\tree_43.obj"
             x_s, y_s, z_s, i_s, j_s, k_s, cor_s = carregar_obj_otimizado(ARQUIVO_OBJ)
             fig_obj = go.Figure(data=[go.Mesh3d(x=x_s, y=y_s, z=z_s, i=i_s, j=j_s, k=k_s, color='lightpink', opacity=0.8)])
             fig_obj.update_layout(height=550, margin=dict(l=0, r=0, b=0, t=0), paper_bgcolor='#1e293b', scene=dict(aspectmode='manual', aspectratio=dict(x=1, y=1, z=1.8), camera=camara_fixa))
@@ -647,12 +647,12 @@ with aba_mapas:
 with aba_projetos:
     st.markdown("### Past Projects")
     
-    CAMINHO_PDF_TOPOGRAFIA = r"C:\Users\Eduardo Toledo\Documents\Portfolio\Data\Projects summary\BANNER_BES.pdf"
-    CAMINHO_PDF_MDT = r"C:\Users\Eduardo Toledo\Documents\Portfolio\Data\Projects summary\Apresentacao_Oral_SIICUSP.pdf"
-    CAMINHO_PDF_CADASTRO = r"C:\Users\Eduardo Toledo\Documents\Portfolio\Data\Projects summary\Apresentação Summit MapBiomas.pdf"
-    CAMINHO_PDF_PROCESSAMENTO = r"C:\Users\Eduardo Toledo\Documents\Portfolio\Data\Projects summary\Submissao_SBSR.pdf"
+    CAMINHO_PDF_TOPOGRAFIA = r"Data\Projects summary\BANNER_BES.pdf"
+    CAMINHO_PDF_MDT = r"Data\Projects summary\Apresentacao_Oral_SIICUSP.pdf"
+    CAMINHO_PDF_CADASTRO = r"Data\Projects summary\Apresentação Summit MapBiomas.pdf"
+    CAMINHO_PDF_PROCESSAMENTO = r"Data\Projects summary\Submissao_SBSR.pdf"
     # Adicione aqui o nome correto do ficheiro PDF de georreferenciamento:
-    CAMINHO_PDF_GEOREFERENCIAMENTO = r"C:\Users\Eduardo Toledo\Documents\Portfolio\Data\Projects summary\Apresentação LARM Eduardo Ingles.pdf"
+    CAMINHO_PDF_GEOREFERENCIAMENTO = r"Data\Projects summary\Apresentação LARM Eduardo Ingles.pdf"
     
     p_col1, p_col2, p_col3 = st.columns(3)
     
@@ -737,9 +737,9 @@ with aba_bacia:
         st.markdown("### ⛰️ Modelo Digital de Terreno (MDT) em 3D")
         st.write("Detailed topographic visualization with hydrography aligned to the terrain.")
     
-    CAMINHO_MDT = r"C:\Users\Eduardo Toledo\Documents\Portfolio\Data\Watershed\MDT_Bacia.tif"
-    CAMINHO_RIOS = r"C:\Users\Eduardo Toledo\Documents\Portfolio\Data\Watershed\Rios_Simples_Bacia.gpkg" 
-    CAMINHO_NASCENTES = r"C:\Users\Eduardo Toledo\Documents\Portfolio\Data\Watershed\Nascentes_Bacia.gpkg"
+    CAMINHO_MDT = r"Data\Watershed\MDT_Bacia.tif"
+    CAMINHO_RIOS = r"Data\Watershed\Rios_Simples_Bacia.gpkg" 
+    CAMINHO_NASCENTES = r"Data\Watershed\Nascentes_Bacia.gpkg"
 
     @st.cache_data
     def processar_modelo_e_vetores(caminho_raster, cam_rios, cam_nascentes, downsample=4):
@@ -927,7 +927,7 @@ def renderizar_pdf_certificado_html(caminho_pdf):
 with aba_certificados:
     st.markdown("### 🏆 Certificates & Credentials")
 
-    PASTA_CERTIFICADOS = r"C:\Users\Eduardo Toledo\Documents\Portfolio\Data\Certificates"
+    PASTA_CERTIFICADOS = r"Data\Certificates"
 
     CERTIFICADOS = [
         {
