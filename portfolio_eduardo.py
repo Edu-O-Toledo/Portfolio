@@ -177,7 +177,8 @@ def carregar_imagem_fundo(caminho_imagem):
             pass
     return ""
 
-CAMINHO_FUNDO_GERAL = r"Data\Images\fundo_geral.jpg"
+# Caminho relativo com barras normais (Linux compatível)
+CAMINHO_FUNDO_GERAL = "Data/Images/fundo_geral.jpg"
 img_geral_b64 = carregar_imagem_fundo(CAMINHO_FUNDO_GERAL)
 
 if img_geral_b64:
@@ -305,20 +306,7 @@ def abrir_popup_pdf(caminho_pdf, titulo=""):
     except Exception as e:
         st.error(f"Erro ao carregar o PDF: {e}")
 
-
-@st.dialog("📖 Guia de Utilização - LiDAR Processing GUI", width="large")
-def abrir_guia_tucupi():
-    st.markdown("""
-    ### 1. ABA ALS (Processamento Base)
-    * **Motor C++ (`lidR` vs `lasR`):**
-      * `lidR`: Mais completo, suporta todos os algoritmos avançados.
-      * `lasR`: Otimizado para velocidade extrema em C++.
-    * **Denoise (SOR) K/M:** Remove pontos de ruído.
-    * **Filtro de Solo (Ground Filter):** `PTD`, `PMF`, `CSF` e `MCC`.
-    * **Algoritmo DTM & CHM:** Suporte a `TIN`, `KNNIDW`, `Kriging` e `p2r`.
-    """)
-
-CAMINHO_BANNER_FUNDO = r"Data\Images\background.jpg"
+CAMINHO_BANNER_FUNDO = "Data/Images/background.jpg"
 img_fundo_b64 = carregar_imagem_fundo(CAMINHO_BANNER_FUNDO)
 
 if img_fundo_b64:
@@ -371,7 +359,6 @@ with aba_visao_geral:
         
     with col2:
         st.image("https://placehold.co/400x300/60a5fa/ffffff?text=Satélite", use_container_width=True)
-        # Placeholder de LiDAR substituído pela sua imagem de segmentação:
         try:
             st.image(Image.open("Data/Images/ground_segmentation_and_dtm.png"), use_container_width=True)
         except Exception as e:
@@ -470,9 +457,7 @@ with aba_lidar:
     
     @st.cache_data
     def carregar_lidar_otimizado(caminho_arquivo=None, max_pontos=50000):
-        import laspy
-        import numpy as np
-        if caminho_arquivo:
+        if caminho_arquivo and os.path.exists(caminho_arquivo):
             try:
                 las = laspy.read(caminho_arquivo)
                 pontos = np.vstack((las.x, las.y, las.z)).transpose()
@@ -522,7 +507,6 @@ with aba_lidar:
             except Exception as e:
                 st.error(f"Erro ao ler LiDAR: {e}")
                 
-        import numpy as np
         x = np.random.uniform(-50, 50, max_pontos)
         y = np.random.uniform(-50, 50, max_pontos)
         z = (np.sin(x * 0.1) * 8) + (np.cos(y * 0.1) * 8) + np.random.normal(0, 0.5, max_pontos)
@@ -531,8 +515,6 @@ with aba_lidar:
     @st.cache_data
     def carregar_obj_otimizado(caminho_arquivo=None):
         import trimesh
-        import numpy as np
-        import os
         if caminho_arquivo and os.path.exists(caminho_arquivo):
             try:
                 malha = trimesh.load(caminho_arquivo, force='mesh')
@@ -548,7 +530,6 @@ with aba_lidar:
         else:
             if caminho_arquivo:
                 st.warning(f"⚠️ Ficheiro não encontrado: {caminho_arquivo}")
-        import numpy as np
         x_sim = np.array([0, -10, 10, 10, -10, 0, 0, 0])
         y_sim = np.array([0, -10, -10, 10, 10, -10, 10, 0])
         z_sim = np.array([15, 0, 0, 0, 0, 0, 0, 0])
@@ -562,7 +543,6 @@ with aba_lidar:
     col_3d, col_texto = st.columns([2.2, 1], gap="medium")
     
     with col_texto:
-        # A LÓGICA DE ALINHAMENTO DINÂMICO
         if tipo_dado == "Point Clouds (.laz / .las)":
             estilo_caixa = "box-sizing: border-box; height: 510px; margin-top: 42px; overflow-y: auto; padding: 25px; border: 1px solid #334155; background-color: #1e293b; border-radius: 15px; color: #e2e8f0;"
         else:
@@ -571,7 +551,6 @@ with aba_lidar:
         st.markdown(f'<div style="{estilo_caixa}"><p style="text-align: justify; font-size: 0.92em; line-height: 1.6; margin-top: 0;">High-resolution <b>Light Detection and Ranging (LiDAR)</b> via UAVs enables the precise capture of complex forest structures. Aerial and terrestrial laser scanning systems generate dense point clouds that represent the exact 3D geometry of individual trees.</p><p style="text-align: justify; font-size: 0.92em; line-height: 1.6;">Processing these massive datasets requires specialized workflows in R and Python. Ground returns are filtered out, leaving a highly detailed architectural model of the canopy, branches, and trunk.</p><p style="text-align: justify; font-size: 0.92em; line-height: 1.6;">By applying advanced algorithms like <b>Quantitative Structure Models (TreeQSM)</b> to point clouds—such as scans of monumental species like the Jequitibá-rosa—the raw data is mathematically reconstructed into a series of connected cylinders that match the tree\'s natural topology.</p><p style="text-align: justify; font-size: 0.92em; line-height: 1.6;">This methodology allows for highly accurate, non-destructive evaluations of <b>aboveground biomass (AGB)</b> across different seasonal conditions, providing critical metrics for carbon stock assessments and structural analysis.</p></div>', unsafe_allow_html=True)
 
     with col_3d:
-        # CÂMARA AFASTADA PARA ENQUADRAR A ÁRVORE INTEIRA
         camara_fixa = dict(
             eye=dict(x=2.4, y=2.4, z=0.8), 
             center=dict(x=0, y=0, z=-0.1)
@@ -580,13 +559,12 @@ with aba_lidar:
         if tipo_dado == "Point Clouds (.laz / .las)":
             mostrar_folhas = st.toggle("🌿 Show Foliage", value=True)
             
-            ARQUIVO_LAS = r"Data\LiDAR\tree_43.laz"
+            ARQUIVO_LAS = "Data/LiDAR/tree_43.laz"
             x_vals, y_vals, z_vals, cores_vals, mask_f = carregar_lidar_otimizado(ARQUIVO_LAS)
             
             fig_3d = go.Figure()
             mask_m = ~mask_f
             
-            import numpy as np
             if np.any(mask_m):
                 fig_3d.add_trace(go.Scatter3d(
                     x=x_vals[mask_m], y=y_vals[mask_m], z=z_vals[mask_m],
@@ -612,7 +590,7 @@ with aba_lidar:
             st.plotly_chart(fig_3d, use_container_width=True, height=510, key="plot_nuvem_classificada")
             
         else:
-            ARQUIVO_OBJ = r"Data\Obj\tree_43.obj"
+            ARQUIVO_OBJ = "Data/Obj/tree_43.obj"
             x_s, y_s, z_s, i_s, j_s, k_s, cor_s = carregar_obj_otimizado(ARQUIVO_OBJ)
             fig_obj = go.Figure(data=[go.Mesh3d(x=x_s, y=y_s, z=z_s, i=i_s, j=j_s, k=k_s, color='lightpink', opacity=0.8)])
             fig_obj.update_layout(height=550, margin=dict(l=0, r=0, b=0, t=0), paper_bgcolor='#1e293b', scene=dict(aspectmode='manual', aspectratio=dict(x=1, y=1, z=1.8), camera=camara_fixa))
@@ -647,12 +625,12 @@ with aba_mapas:
 with aba_projetos:
     st.markdown("### Past Projects")
     
-    CAMINHO_PDF_TOPOGRAFIA = r"Data\Projects summary\BANNER_BES.pdf"
-    CAMINHO_PDF_MDT = r"Data\Projects summary\Apresentacao_Oral_SIICUSP.pdf"
-    CAMINHO_PDF_CADASTRO = r"Data\Projects summary\Apresentação Summit MapBiomas.pdf"
-    CAMINHO_PDF_PROCESSAMENTO = r"Data\Projects summary\Submissao_SBSR.pdf"
-    # Adicione aqui o nome correto do ficheiro PDF de georreferenciamento:
-    CAMINHO_PDF_GEOREFERENCIAMENTO = r"Data\Projects summary\Apresentação LARM Eduardo Ingles.pdf"
+    # Caminhos relativos usando barras normais
+    CAMINHO_PDF_TOPOGRAFIA = "Data/Projects summary/BANNER_BES.pdf"
+    CAMINHO_PDF_MDT = "Data/Projects summary/Apresentacao_Oral_SIICUSP.pdf"
+    CAMINHO_PDF_CADASTRO = "Data/Projects summary/Apresentação Summit MapBiomas.pdf"
+    CAMINHO_PDF_PROCESSAMENTO = "Data/Projects summary/Submissao_SBSR.pdf"
+    CAMINHO_PDF_GEOREFERENCIAMENTO = "Data/Projects summary/Apresentação LARM Eduardo Ingles.pdf"
     
     p_col1, p_col2, p_col3 = st.columns(3)
     
@@ -707,7 +685,6 @@ with aba_projetos:
         """, unsafe_allow_html=True)
         if st.button("Ver detalhes →", key="btn_pdf_processamento"): abrir_popup_pdf(CAMINHO_PDF_PROCESSAMENTO, "Image Processing")
 
-    # NOVO CARD REAL: Georeferencing
     with p_col5:
         capa_geo = gerar_preview_pdf(CAMINHO_PDF_GEOREFERENCIAMENTO)
         st.markdown(f"""
@@ -720,7 +697,6 @@ with aba_projetos:
         """, unsafe_allow_html=True)
         if st.button("Ver detalhes →", key="btn_pdf_geo"): abrir_popup_pdf(CAMINHO_PDF_GEOREFERENCIAMENTO, "Georeferencing")
 
-    # MANTÉM SIG CONSULTING COMO CARD FALSO (Apenas visual)
     with p_col6:
         st.markdown(f"""
         <div class="custom-card" style="background-color: #1e293b; color: white;">
@@ -737,19 +713,18 @@ with aba_bacia:
         st.markdown("### ⛰️ Modelo Digital de Terreno (MDT) em 3D")
         st.write("Detailed topographic visualization with hydrography aligned to the terrain.")
     
-    CAMINHO_MDT = r"Data\Watershed\MDT_Bacia.tif"
-    CAMINHO_RIOS = r"Data\Watershed\Rios_Simples_Bacia.gpkg" 
-    CAMINHO_NASCENTES = r"Data\Watershed\Nascentes_Bacia.gpkg"
+    CAMINHO_MDT = "Data/Watershed/MDT_Bacia.tif"
+    CAMINHO_RIOS = "Data/Watershed/Rios_Simples_Bacia.gpkg" 
+    CAMINHO_NASCENTES = "Data/Watershed/Nascentes_Bacia.gpkg"
 
     @st.cache_data
     def processar_modelo_e_vetores(caminho_raster, cam_rios, cam_nascentes, downsample=4):
         try:
             import rasterio
             import geopandas as gpd
-            import numpy as np
             if not os.path.exists(caminho_raster):
                 return None, None, None, None, None, None, None, None, None
-            with rasterio.open(caminho_raster) as sr:
+            with rasterio.open(caminho_raster) as src:
                 z_raw = src.read(1).astype(float)
                 nodata = src.nodata
                 if nodata is not None:
@@ -923,11 +898,11 @@ def renderizar_pdf_certificado_html(caminho_pdf):
     except Exception:
         return None
 
-
 with aba_certificados:
     st.markdown("### 🏆 Certificates & Credentials")
 
-    PASTA_CERTIFICADOS = r"Data\Certificates"
+    # Caminho relativo sem barra invertida
+    PASTA_CERTIFICADOS = "Data/Certificates"
 
     CERTIFICADOS = [
         {
@@ -937,7 +912,7 @@ with aba_certificados:
             "local": "Piracicaba, São Paulo, Brazil",
             "categoria": "Oral Presentation",
             "descricao": "Delivered an oral presentation titled \"Quantitative Structure Modeling Using LiDAR of the Patriarch (Cariniana legalis) in Vassununga State Park\" at the 34th SIICUSP. The study used Aerial Laser Scanning (DJI Matrice 350 with a Zenmuse L2 sensor), CloudCompare, and the TreeQSM algorithm in MATLAB to generate a 3D structural model of the tree and estimate its volume (255.18 m³), aboveground biomass, and carbon stock.",
-            "arquivo": os.path.join(PASTA_CERTIFICADOS, "siicusp_2026.pdf")
+            "arquivo": f"{PASTA_CERTIFICADOS}/siicusp_2026.pdf"
         },
         {
             "titulo": "Workshop Speaker — Latin American Regional Meeting (LARM / IFSA)",
@@ -946,7 +921,7 @@ with aba_certificados:
             "local": "Piracicaba, São Paulo, Brazil",
             "categoria": "Workshop Speaker",
             "descricao": "Delivered a workshop in Spanish titled \"Discovering Brazil: Biomes, Territory, and the MapBiomas Network\" for forestry students at the IFSA Latin American Regional Meeting (LARM). Introduced Brazil's six terrestrial biomes alongside foundational remote sensing concepts, including satellite monitoring history, radiance, and spectral reflectance. Presented the MapBiomas Network's open-science methodology, combining satellite imagery and machine learning, and demonstrated its thematic platforms for monitoring land-use change, fire, deforestation alerts, surface water, and ecological recovery across Latin America. Concluded with an applied case study on landscape connectivity and ecological corridor modeling between protected areas in the Atlantic Forest.",
-            "arquivo": os.path.join(PASTA_CERTIFICADOS, "larm_ifsa_2026.pdf")
+            "arquivo": f"{PASTA_CERTIFICADOS}/larm_ifsa_2026.pdf"
         },
         {
             "titulo": "Presenter — MapBiomas User Summit 2026",
@@ -955,7 +930,7 @@ with aba_certificados:
             "local": "São Paulo, São Paulo, Brazil",
             "categoria": "Conference",
             "descricao": "Attended the MapBiomas User Summit 2026, organized by the Instituto de Apoio ao MapBiomas at INSPER in São Paulo. Presented the research work entitled \"Integrating native vegetation deficits into the modeling of ecological corridors between Protected Areas in Brazil\" during the Landscape Ecology and Regional Scale Conservation session.",
-            "arquivo": os.path.join(PASTA_CERTIFICADOS, "mapbiomas_summit_2026.pdf")
+            "arquivo": f"{PASTA_CERTIFICADOS}/mapbiomas_summit_2026.pdf"
         },
         {
             "titulo": "Landscape Ecology Modeling Workshop Speaker",
@@ -964,7 +939,7 @@ with aba_certificados:
             "local": "Piracicaba, São Paulo, Brazil",
             "categoria": "Workshop Speaker",
             "descricao": "Organized and instructed an intensive practical workshop on landscape ecology modeling for 40 undergraduate Forest Engineering students at ESALQ/USP. Guided participants through core theoretical concepts and spatial analysis workflows in a geographic information system, focusing on ecological corridor simulation and landscape connectivity assessment using specialized tools such as LSCorridors and Conefor.",
-            "arquivo": os.path.join(PASTA_CERTIFICADOS, "landscape_ecology_workshop_2026.pdf")
+            "arquivo": f"{PASTA_CERTIFICADOS}/landscape_ecology_workshop_2026.pdf"
         },
         {
             "titulo": "Poster Presenter — British Ecological Society Annual Meeting",
@@ -973,7 +948,7 @@ with aba_certificados:
             "local": "Edinburgh, Scotland",
             "categoria": "International Conference",
             "descricao": "Presented the research poster titled \"From Legal Restoration to Functional Corridors: Modeling Landscape Connectivity in São Paulo State, Brazil\" at the British Ecological Society Annual Meeting in Edinburgh, Scotland.",
-            "arquivo": os.path.join(PASTA_CERTIFICADOS, "bes_annual_meeting_2025.pdf")
+            "arquivo": f"{PASTA_CERTIFICADOS}/bes_annual_meeting_2025.pdf"
         },
         {
             "titulo": "Organizing Coordinator — 10th Workshop on Forest Restoration",
@@ -982,7 +957,7 @@ with aba_certificados:
             "local": "Piracicaba, São Paulo, Brazil",
             "categoria": "Event Coordination",
             "descricao": "Coordinated the 10th Workshop on Forest Restoration (Special Edition: Forest and Water) at ESALQ/USP. Managed the event structure for over 250 researchers and professionals, coordinating thematic sessions on restoration ecology, large-scale projects, public policies, and the ecohydrological dynamics of watersheds.",
-            "arquivo": os.path.join(PASTA_CERTIFICADOS, "10th_workshop_restoration_2023.pdf")
+            "arquivo": f"{PASTA_CERTIFICADOS}/10th_workshop_restoration_2023.pdf"
         },
         {
             "titulo": "Organizing Committee — 9th Workshop on Forest Restoration",
@@ -991,7 +966,7 @@ with aba_certificados:
             "local": "Piracicaba, São Paulo, Brazil",
             "categoria": "Event Organization",
             "descricao": "Served on the organizing committee for the 9th Workshop on Forest Restoration. Supported the dissemination of scientific research and fostered discussions on applied forest ecology and restoration practices within the academic community.",
-            "arquivo": os.path.join(PASTA_CERTIFICADOS, "9th_workshop_restoration_2022.pdf")
+            "arquivo": f"{PASTA_CERTIFICADOS}/9th_workshop_restoration_2022.pdf"
         },
     ]
 
