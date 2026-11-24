@@ -749,7 +749,7 @@ with aba_bacia:
             import numpy as np
             if not os.path.exists(caminho_raster):
                 return None, None, None, None, None, None, None, None, None
-            with rasterio.open(caminho_raster) as src:
+            with rasterio.open(caminho_raster) as sr:
                 z_raw = src.read(1).astype(float)
                 nodata = src.nodata
                 if nodata is not None:
